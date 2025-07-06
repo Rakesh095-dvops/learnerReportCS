@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: learner-report-cs-frontend-configmap
+  namespace: learner-report
+  labels:
+    app: learner-report-cs-frontend
+data:
+  REACT_APP_API_BASE_URL: "http://learner-report-cs-backend-service:3001"

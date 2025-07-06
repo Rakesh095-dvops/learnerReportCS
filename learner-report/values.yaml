@@ -1,0 +1,50 @@
+# values.yaml
+global:
+  networkPolicy:
+    enabled: true
+  namespace: learner-report
+
+# Backend configuration for learnerReportCS 
+backend:
+  replicaCount: 1
+  image:
+    repository: crashrik/learner-report-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  env:
+    ATLAS_URI: "mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
+    HASH_KEY: "thisIsMyHashKey"
+    JWT_SECRET_KEY: "thisIsMyJwtSecretKey"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# Frontend configuration for learnerReportCS 
+frontend:
+  image:
+    repository: crashrik/learner-report-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+  env:
+    REACT_APP_API_BASE_URL: "http://learner-report-backend:3000"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  ingress:
+    host: myapp.example.com

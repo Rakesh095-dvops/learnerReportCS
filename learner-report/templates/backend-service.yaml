@@ -1,0 +1,17 @@
+{{- $namespace := .Values.global.namespace -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: learner-report-backend
+  namespace: {{ $namespace }}
+  labels:
+    app: learner-report-backend   
+spec:
+  type: {{ .Values.backend.service.type }}
+  ports:
+  - port: {{ .Values.backend.service.port }}
+    targetPort: {{ .Values.backend.service.port }}
+    protocol: TCP
+  selector:
+    app: learner-report-backend   

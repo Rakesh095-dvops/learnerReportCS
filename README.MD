@@ -3,12 +3,8 @@
 docker build -t learnereport_backend:latest .  
 docker tag  learnereport_backend:latest  crashrik/learnereportcs_backend:latest 
 docker push crashrik/learnereportcs_backend:latest
-
 docker build -t learnereport_frontend:latest .  
-
-
 ```
-
 # Docker run file 
 ```sh
 docker run -d --env-file .env -p 3000:3000 crashrik/learnereportcs_backend:latest

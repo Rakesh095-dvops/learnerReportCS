@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: learner-report-cs-backend-service
+  namespace: learner-report
+  labels:
+    app: learner-report-cs-backend
+spec:
+  selector:
+    app: learner-report-cs-backend
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

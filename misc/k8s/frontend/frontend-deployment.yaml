@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: learner-report-cs-frontend-deployment
+  namespace: learner-report
+  labels:
+    app: learner-report-cs-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: learner-report-cs-frontend
+  template:
+    metadata:
+      labels:
+        app: learner-report-cs-frontend
+    spec:
+      containers:
+      - name: learner-report-cs-frontend
+        image: crashrik/learner-report-frontend:latest # Replace with your actual image
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        envFrom:
+        - configMapRef:
+            name: learner-report-cs-frontend-configmap

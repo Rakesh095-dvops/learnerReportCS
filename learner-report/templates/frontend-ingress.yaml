@@ -1,0 +1,28 @@
+{{- $namespace := .Values.global.namespace -}}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: learner-report-frontend
+  namespace: {{ $namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # Uncomment the next line to enable TLS with cert-manager
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: {{ .Values.frontend.ingress.host | default "frontend.local" }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-frontend
+                port:
+                  number: {{ .Values.frontend.service.port }}
+  # Uncomment the following to enable TLS
+  # tls:
+  #   - hosts:
+  #       - {{ .Values.frontend.ingress.host | default "frontend.local" }}
+  #     secretName: learner-report-frontend-tls
