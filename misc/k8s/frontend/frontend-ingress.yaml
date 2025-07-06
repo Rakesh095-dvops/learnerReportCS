@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: learner-report-cs-frontend-ingress
+  namespace: learner-report
+  labels:
+    app: learner-report-cs-frontend
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-frontend-service
+                port:
+                  number: 3000

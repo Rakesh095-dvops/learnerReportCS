@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: learner-report-cs-backend-ingress
+  namespace: learner-report
+  labels:
+    app: learner-report-cs-backend
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /student
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /careerservice
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /batch
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /attendance
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /company
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /placement
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /capstoneProgress
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /assessment
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /assignment
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
+          - path: /capstone
+            pathType: Prefix
+            backend:
+              service:
+                name: learner-report-cs-backend-service
+                port:
+                  number: 3001
