@@ -32,3 +32,16 @@ docker build --no-cache --progress=plain -t your-frontend .
 ------
 
 ```
+## k8s manifest files 
+
+```sh
+kubectl apply -f .\misc\k8s\backend\backend-secret.yaml
+kubectl apply -f .\misc\k8s\backend\backend-configmap.yaml
+kubectl apply -f .\misc\k8s\backend\backend-deployment.yaml
+kubectl apply -f .\misc\k8s\backend\backend-service.yaml   
+
+
+kubectl get all -n learner-report -o wide
+kubectl port-forward svc/learner-report-cs-backend-service 3001:3001 -n learner-report
+```
+
