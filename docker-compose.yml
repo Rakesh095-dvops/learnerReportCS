@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./learnerReportCS_backend
+      dockerfile: Dockerfile
+    container_name: learner-report-backend
+    ports:
+      - "3000:3000"
+    networks:
+      - learner-report-network
+    environment:
+      - ATLAS_URI=mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority
+      - HASH_KEY=thisIsMyHashKey
+      - JWT_SECRET_KEY=thisIsMyJwtSecretKey
+  frontend:
+    build:
+      context: ./learnerReportCS_frontend
+      dockerfile: Dockerfile
+    container_name: learner-report-frontend
+    networks: 
+      - learner-report-network
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:3001
+    ports:
+      - "80:3000"
+    depends_on:
+      - backend
+    #network configuration
+networks:
+  learner-report-network:
+    driver: bridge
