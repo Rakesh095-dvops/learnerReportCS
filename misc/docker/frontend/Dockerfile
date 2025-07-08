@@ -1,21 +1,11 @@
-
-FROM node:20
-
-# Working directory be app
+FROM node:20-alpine AS build
 WORKDIR /usr/src/app
-
 COPY package*.json ./
+RUN npm install react-scripts --legacy-peer-deps --force
+COPY . ./
+RUN npm run build 
 
-
-###  Installing dependencies (include dev dependencies for msw) --omit=dev 
-RUN npm ci --legacy-peer-deps
-
-### Installing dependencies
-#RUN npm install
-
-# copy local files to app folder
-COPY . .
-
-EXPOSE 3000
-
-CMD ["npm","start"]
+FROM nginx:alpine
+COPY --from=build /usr/src/app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
