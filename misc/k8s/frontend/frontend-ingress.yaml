@@ -5,9 +5,13 @@ metadata:
   namespace: learner-report
   labels:
     app: learner-report-cs-frontend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - http:
+    - host: frontend.local
+      http:
         paths:
           - path: /
             pathType: Prefix
@@ -15,4 +19,4 @@ spec:
               service:
                 name: learner-report-cs-frontend-service
                 port:
-                  number: 3000
+                  number: 80

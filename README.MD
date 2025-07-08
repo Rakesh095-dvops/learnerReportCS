@@ -2,10 +2,14 @@
 
 ## Docker Build
 ```sh
+# Build backend (from learnerReportCS_backend directory)
+cd learnerReportCS_backend
 docker build -t learner-report-backend:latest .
 docker tag learner-report-backend:latest crashrik/learner-report-backend:latest
 docker push crashrik/learner-report-backend:latest
 
+# Build frontend (from learnerReportCS_frontend directory)
+cd ../learnerReportCS_frontend
 docker build -t learner-report-frontend:latest .
 docker tag learner-report-frontend:latest crashrik/learner-report-frontend:latest
 docker push crashrik/learner-report-frontend:latest
@@ -13,12 +17,16 @@ docker push crashrik/learner-report-frontend:latest
 
 ## Docker Run
 ```sh
-docker run -d --env-file .env -p 3000:3000 crashrik/learner-report-backend:latest
-docker run -it --env-file .env -p 80:80 crashrik/learner-report-frontend:latest
+# Run backend
+docker run -d --name learner-backend --env-file .env -p 3001:3000 crashrik/learner-report-backend:latest
+
+# Run frontend
+docker run -d --name learner-frontend -p 80:80 crashrik/learner-report-frontend:latest
 ```
 
 ## Troubleshooting
 ```sh
+# List all containers
 docker ps -a
 docker build --no-cache --progress=plain -t your-frontend .
 ```

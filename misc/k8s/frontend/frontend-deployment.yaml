@@ -17,16 +17,30 @@ spec:
     spec:
       containers:
       - name: learner-report-cs-frontend
-        image: crashrik/learner-report-frontend:latest # Replace with your actual image
+        image: crashrik/learner-report-frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
+          protocol: TCP
         resources:
           requests:
-            memory: "2G"  # Increase from 1G to 2G
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "100m"
           limits:
-            memory: "4G"  # Increase from 2G to 4G
-            cpu: "1G"
+            memory: "512Mi"
+            cpu: "500m"
         envFrom:
         - configMapRef:
             name: learner-report-cs-frontend-configmap
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5

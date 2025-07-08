@@ -6,4 +6,5 @@ metadata:
   labels:
     app: learner-report-cs-frontend
 data:
-  REACT_APP_API_BASE_URL: "http://learner-report-cs-backend-service:3001"
+  REACT_APP_API_BASE_URL: "http://backend.local"
+  NODE_ENV: "production"
