@@ -1,34 +1,52 @@
+{{- if .Values.backend.enabled }}
 {{- $namespace := .Values.global.namespace -}}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: learner-report-backend
+  name: {{ .Values.backend.name }}
   namespace: {{ $namespace }}
   labels:
-    app: learner-report-backend   
+    app: {{ .Values.backend.name }}
+    component: backend
+    chart: {{ include "learner-report.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.backend.replicaCount }}
   selector:
     matchLabels:
-      app: learner-report-backend     
+      app: {{ .Values.backend.name }}
+      component: backend
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: learner-report-backend       
+        app: {{ .Values.backend.name }}
+        component: backend
+        release: {{ .Release.Name }}
     spec:
       containers:
-      - name: learner-report-backend
+      - name: {{ .Values.backend.name }}
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         ports:
-        - containerPort: {{ .Values.backend.service.port }}
+        - name: http
+          containerPort: {{ .Values.backend.service.targetPort }}
+          protocol: {{ .Values.backend.service.protocol }}
         env:
-        - name: ATLAS_URI
-          value: {{ .Values.backend.env.ATLAS_URI | quote }}
-        - name: HASH_KEY
-          value: {{ .Values.backend.env.HASH_KEY | quote }}
-        - name: JWT_SECRET_KEY
-          value: {{ .Values.backend.env.JWT_SECRET_KEY | quote }}
+        {{- range $key, $value := .Values.backend.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
         resources:
-{{ toYaml .Values.backend.resources | indent 10 }}
+          {{- toYaml .Values.backend.resources | nindent 10 }}
+        {{- if .Values.backend.livenessProbe }}
+        livenessProbe:
+          {{- toYaml .Values.backend.livenessProbe | nindent 10 }}
+        {{- end }}
+        {{- if .Values.backend.readinessProbe }}
+        readinessProbe:
+          {{- toYaml .Values.backend.readinessProbe | nindent 10 }}
+        {{- end }}
+      restartPolicy: Always
+{{- end }}

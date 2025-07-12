@@ -1,0 +1,51 @@
+# values-production.yaml - For AWS production deployment
+global:
+  namespace: learner-report
+  environment: production
+
+# AWS-specific configuration
+aws:
+  region: ap-south-1
+  loadBalancer:
+    type: alb
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "alb"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+
+# Backend configuration for production
+backend:
+  enabled: true
+  replicaCount: 2
+  image:
+    pullPolicy: Always
+  env:
+    NODE_ENV: production
+    PORT: "3000"
+    # In production, use secrets instead of plain text
+    ATLAS_URI: "mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
+    HASH_KEY: "thisIsMyHashKey"
+    JWT_SECRET_KEY: "thisIsMyJwtSecretKey"
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tls:
+    - hosts:
+      - api.learner-report.com
+      secretName: backend-tls
+
+# Frontend configuration for production
+frontend:
+  enabled: true
+  replicaCount: 2  
+  image:
+    pullPolicy: Always
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tls:
+    - hosts:
+      - app.learner-report.com
+      secretName: frontend-tls

@@ -1,30 +1,56 @@
+{{- if .Values.frontend.enabled }}
 {{- $namespace := .Values.global.namespace -}}
----
+{{- $environment := .Values.global.environment -}}
+{{- $backendHost := index .Values.environments $environment "backend" "host" -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: learner-report-frontend
+  name: {{ .Values.frontend.name }}
   namespace: {{ $namespace }}
   labels:
-    app: learner-report-frontend    
+    app: {{ .Values.frontend.name }}
+    component: frontend
+    chart: {{ include "learner-report.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:
     matchLabels:
-      app: learner-report-frontend      
+      app: {{ .Values.frontend.name }}
+      component: frontend
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: learner-report-frontend        
+        app: {{ .Values.frontend.name }}
+        component: frontend
+        release: {{ .Release.Name }}
     spec:
       containers:
-      - name: learner-report-frontend
+      - name: {{ .Values.frontend.name }}
         image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
         imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
         ports:
-        - containerPort: 3000
+        - name: http
+          containerPort: {{ .Values.frontend.service.targetPort }}
+          protocol: {{ .Values.frontend.service.protocol }}
         env:
         - name: REACT_APP_API_BASE_URL
-          value: {{ .Values.frontend.env.REACT_APP_API_BASE_URL | quote }}
+          value: "http://{{ $backendHost }}"
+        {{- range $key, $value := .Values.frontend.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
         resources:
-{{ toYaml .Values.backend.resources | indent 10 }}
+          {{- toYaml .Values.frontend.resources | nindent 10 }}
+        {{- if .Values.frontend.livenessProbe }}
+        livenessProbe:
+          {{- toYaml .Values.frontend.livenessProbe | nindent 10 }}
+        {{- end }}
+        {{- if .Values.frontend.readinessProbe }}
+        readinessProbe:
+          {{- toYaml .Values.frontend.readinessProbe | nindent 10 }}
+        {{- end }}
+      restartPolicy: Always
+{{- end }}

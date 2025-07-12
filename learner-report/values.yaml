@@ -1,50 +1,164 @@
-# values.yaml
+# Global configuration
 global:
-  networkPolicy:
-    enabled: true
   namespace: learner-report
+  environment: development # development, staging, production
+  
+# Environment-specific configuration
+environments:
+  development:
+    backend:
+      host: backend.local
+      domain: backend.local
+    frontend:
+      host: frontend.local
+      domain: frontend.local
+  production:
+    backend:
+      host: api.learner-report.com
+      domain: learner-report.com
+    frontend:
+      host: app.learner-report.com
+      domain: learner-report.com
 
-# Backend configuration for learnerReportCS 
+# Backend configuration
 backend:
+  enabled: true
+  name: learner-report-backend
   replicaCount: 1
+  
   image:
     repository: crashrik/learner-report-backend
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
+  
   service:
     type: ClusterIP
-    port: 3000
+    port: 3001
+    targetPort: 3000
+    protocol: TCP
+  
+  # Environment variables
   env:
+    NODE_ENV: production
+    PORT: "3000"
+    # MongoDB configuration (use secrets in production)
     ATLAS_URI: "mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
     HASH_KEY: "thisIsMyHashKey"
     JWT_SECRET_KEY: "thisIsMyJwtSecretKey"
+  
+  # Resource limits
   resources:
     limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
       cpu: 500m
       memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 5
+  
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 3000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 5
+  
+  # Ingress configuration
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+      nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+      nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type, Authorization"
+      nginx.ingress.kubernetes.io/use-regex: "true"
+    # Hosts will be set based on environment
+    hosts: []
+    tls: []
 
-# Frontend configuration for learnerReportCS 
+# Frontend configuration
 frontend:
+  enabled: true
+  name: learner-report-frontend
+  replicaCount: 1
+  
   image:
     repository: crashrik/learner-report-frontend
     tag: latest
-    pullPolicy: IfNotPresent
-  replicaCount: 1
+    pullPolicy: Always
+  
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 80
-    targetPort: 3000
+    targetPort: 80
+    protocol: TCP
+  
+  # Environment variables
   env:
-    REACT_APP_API_BASE_URL: "http://learner-report-backend:3000"
+    NODE_ENV: production
+    # API URL will be set based on environment
+  
+  # Resource limits
   resources:
     limits:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 200m
+      cpu: 250m
       memory: 256Mi
+  
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  
+  # Ingress configuration
   ingress:
-    host: myapp.example.com
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    # Hosts will be set based on environment
+    hosts: []
+    tls: []
+
+# AWS-specific configuration
+aws:
+  region: ap-south-1
+  loadBalancer:
+    type: nlb # or alb
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+
+# Minikube-specific configuration  
+minikube:
+  enabled: false
+  tunnel: false

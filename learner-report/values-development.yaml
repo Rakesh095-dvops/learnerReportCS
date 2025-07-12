@@ -1,0 +1,28 @@
+# values-development.yaml - For Minikube local development
+global:
+  namespace: learner-report
+  environment: development
+
+# Override for local minikube development
+minikube:
+  enabled: true
+  tunnel: true
+
+# Backend configuration for development
+backend:
+  enabled: true
+  image:
+    pullPolicy: Always
+  env:
+    NODE_ENV: development
+    PORT: "3000"
+    # Use your MongoDB connection string
+    ATLAS_URI: "mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
+    HASH_KEY: "thisIsMyHashKey"
+    JWT_SECRET_KEY: "thisIsMyJwtSecretKey"
+
+# Frontend configuration for development  
+frontend:
+  enabled: true
+  image:
+    pullPolicy: Always

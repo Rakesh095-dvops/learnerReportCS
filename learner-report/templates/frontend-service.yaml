@@ -1,17 +1,25 @@
+{{- if .Values.frontend.enabled }}
 {{- $namespace := .Values.global.namespace -}}
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: learner-report-frontend
+  name: {{ .Values.frontend.name }}-service
   namespace: {{ $namespace }}
   labels:
-    app: learner-report-frontend   
+    app: {{ .Values.frontend.name }}
+    component: frontend
+    chart: {{ include "learner-report.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   type: {{ .Values.frontend.service.type }}
   ports:
   - port: {{ .Values.frontend.service.port }}
     targetPort: {{ .Values.frontend.service.targetPort }}
-    protocol: TCP
+    protocol: {{ .Values.frontend.service.protocol }}
+    name: http
   selector:
-    app: learner-report-frontend   
+    app: {{ .Values.frontend.name }}
+    component: frontend
+    release: {{ .Release.Name }}
+{{- end }}   

@@ -1,17 +1,25 @@
+{{- if .Values.backend.enabled }}
 {{- $namespace := .Values.global.namespace -}}
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: learner-report-backend
+  name: {{ .Values.backend.name }}-service
   namespace: {{ $namespace }}
   labels:
-    app: learner-report-backend   
+    app: {{ .Values.backend.name }}
+    component: backend
+    chart: {{ include "learner-report.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   type: {{ .Values.backend.service.type }}
   ports:
   - port: {{ .Values.backend.service.port }}
-    targetPort: {{ .Values.backend.service.port }}
-    protocol: TCP
+    targetPort: {{ .Values.backend.service.targetPort }}
+    protocol: {{ .Values.backend.service.protocol }}
+    name: http
   selector:
-    app: learner-report-backend   
+    app: {{ .Values.backend.name }}
+    component: backend
+    release: {{ .Release.Name }}
+{{- end }}   
