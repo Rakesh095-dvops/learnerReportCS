@@ -42,7 +42,7 @@ backend:
     NODE_ENV: production
     PORT: "3000"
     # MongoDB configuration (use secrets in production)
-    ATLAS_URI: "mongodb+srv://dbuser:tUmusUV3MteObgt179ou@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
+    ATLAS_URI: "mongodb+srv://dbuser:{update_pass}@cluster0.i0pov.mongodb.net/blog_mern?retryWrites=true&w=majority"
     HASH_KEY: "thisIsMyHashKey"
     JWT_SECRET_KEY: "thisIsMyJwtSecretKey"
   
